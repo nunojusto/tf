@@ -44,7 +44,6 @@ variable "source_address_prefix" {
   default = "*" 
 }
 
-
 #
 # Resources
 # 
@@ -73,10 +72,21 @@ resource "azurerm_subnet" "subnet" {
   resource_group_name = azurerm_resource_group.rg.name
   virtual_network_name= azurerm_virtual_network.vnet.name
   address_prefixes      = ["10.0.2.0/24"]
-  
+  security_rule {
+    name                        = "allow_remote_rdp_inbound"
+    resource_group_name         = azurerm_resource_group.rg.name
+    description                 = "Allow remote protocol RDP (3389) inbound."
+    priority                    = 100
+    direction                   = "Inbound"
+    access                      = "Allow"
+    protocol                    = "*"
+    source_port_range           = "*"
+    destination_port_range      = 3389
+    source_address_prefix       = var.source_address_prefix
+    destination_address_prefix  = "*"
+    network_security_group_name = azurerm_network_security_group.nsg.name
+  } 
 }
-
-
 
 resource "azurerm_public_ip" "pip" {
   name                = "public_ip_windows2016_vm"
@@ -146,7 +156,6 @@ resource "azurerm_windows_virtual_machine" "example" {
     version   = "latest"
   }
 }
-
 
 #
 # Output

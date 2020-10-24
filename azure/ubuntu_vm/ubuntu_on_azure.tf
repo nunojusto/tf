@@ -62,20 +62,19 @@ resource "azurerm_network_security_group" "nsg" {
   name                = "nsg-ubuntuvm"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-}
-resource "azurerm_network_security_rule" "nsr" {
-  name                        = "allow_remote_ssh_inbound"
-  resource_group_name         = azurerm_resource_group.rg.name
-  description                 = "Allow remote protocol SSH (22) inbound."
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = 22
-  source_address_prefix       = var.source_address_prefix
-  destination_address_prefix  = "*"
-  network_security_group_name = azurerm_network_security_group.nsg.name
+
+  security_rule {
+    name                        = "allow_remote_ssh_inbound"
+    description                 = "Allow remote protocol SSH (22) inbound."
+    priority                    = 100
+    direction                   = "Inbound"
+    access                      = "Allow"
+    protocol                    = "Tcp"
+    source_port_range           = "*"
+    destination_port_range      = 22
+    source_address_prefix       = var.source_address_prefix
+    destination_address_prefix  = "*"
+  }
 }
 
 resource "azurerm_network_interface" "nic" {
