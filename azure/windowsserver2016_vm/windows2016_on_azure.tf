@@ -53,6 +53,13 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
+resource "azurerm_management_lock" "resource-group-level" {
+  name       = "resource-group-level"
+  scope      = azurerm_resource_group.rg.id
+  lock_level = "ReadOnly"
+  notes      = "This Resource Group is Read-Only"
+}
+
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet"
   location            = azurerm_resource_group.rg.location
